@@ -1,0 +1,107 @@
+<html>
+<head><link href="css/main.css" rel=stylesheet type="text/css"></head>
+	<body>
+<form method = "post" action = "input.html">
+<table width=60% border=0 style="font-size:25;height:30;">
+	<tr><td> </td></tr>
+	<tr>
+		<td>名字</td><td><input type=text name="customername" size="20%" 
+style="font-size:25px;"></td>
+	</tr>
+	<tr>
+		<td>电话号码</td><td><input type=text name="customertel" size="20%"
+style="font-size:25px;"></td>
+	</tr>
+	<tr>
+		<td></td><td><input type=text value="<?php echo date('Y-m-d H:i:s');?>" hidden name="orderdate" size="50%"></td>
+	</tr>
+	<tr>
+		<td>收货日期</td><td><input type=date value="<?php echo date('Y-m-d',strtotime('+1 day'))?>" 
+name="deliverydate" 
+size="20%" style="font-size:25px;"></td>
+	</tr>
+	<tr>
+		<td>收货地点</td><td><input type=text value="自取" name="deliverylocation" size="20%" 
+style="font-size:25px;"></td>
+	</tr>
+	<tr>
+		<td>备注</td><td><textarea rows="5" cols="20%" name="remarks" size="20%" 
+style="font-size:25px;"></textarea></td>
+	</tr>
+
+	<tr>
+		<td><input type="submit" name="submit" value="submit"></td>
+	</tr>
+</table>
+</form>
+<?php
+
+	$customername = $customertel = $orderdate = $deliverylocation = $deliverydate = $remarks = "";
+
+	function cleaninput($data)
+	{
+		$data = trim($data);
+		$data = stripslashes($data);
+		$data = htmlspecialchars($data);
+		return $data;
+	}
+
+	if($_SERVER["REQUEST_METHOD"] == "POST")
+	{
+		$customername = cleaninput($_POST["customername"]);
+		$customertel = cleaninput($_POST["customertel"]);
+		$orderdate = cleaninput($_POST["orderdate"]);
+		$deliverylocation = cleaninput($_POST["deliverylocation"]);
+		$deliverydate = cleaninput($_POST["deliverydate"]);
+		$remarks = cleaninput($_POST["remarks"]);
+
+
+		echo $customername."\n";
+		echo $customertel;
+		class MyDB extends SQLite3
+		{
+			function __construct()
+			{
+				$this->open('ssmz.db');
+			}
+		}
+
+		$db = new MyDB();
+		if (!$db)
+		{
+			echo $db->lastErrorMsg();
+		}
+		else
+		{
+			echo "Opened database successfully\n";
+		}
+	$sql = "INSERT INTO ORDERHEADER (ORDERDATE,CUSTOMERNAME,CUSTOMERTEL,DELIVERYLOCATION,DELIVERYDATE,REMARKS) VALUES ('".$orderdate."','".$customername."','".$customertel."','".$deliverylocation."','".$deliverydate."','".$remarks."')";
+	$ret = $db->exec($sql);
+	if(!$ret)
+	{
+		echo $db->lastErrorMsg();
+	}
+	else
+	{
+		echo "Record created successfully\n";
+	}
+	$db->close();
+	}
+
+	if($_GET['button1']){loadpage1();}
+	if($_GET['button2']){loadpage2();}
+	if($_GET['button3']){loadpage3();}
+
+
+	function loadpage1(){
+		echo "LOADED1";
+	}
+	function loadpage2(){
+		echo "LOADED2";
+	}
+	function loadpage3(){
+		echo "LOADED3";
+	}
+?>
+	</body>
+</html>
